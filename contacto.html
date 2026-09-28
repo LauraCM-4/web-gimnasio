@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contacto | Gimnasio Calera Toledo</title>
+<meta name="description" content="Reserva tu clase gratuita o resuelve tus dudas sobre Gimnasio Calera en Toledo. Formulario de contacto, teléfono, email y ubicación.">
+<link rel="canonical" href="https://www.gymcalera.es/contacto.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Contacto | Gimnasio Calera Toledo">
+<meta property="og:description" content="Escríbenos o llámanos para reservar tu clase de prueba gratuita en Gimnasio Calera, Toledo.">
+<meta property="og:url" content="https://www.gymcalera.es/contacto.html">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%23101114%22/><text x=%2250%22 y=%2268%22 font-size=%2260%22 fill=%22%23e2472b%22 text-anchor=%22middle%22 font-family=%22Arial%22>C</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Saltar al contenido</a>
+
+<header class="site-header">
+  <nav class="nav container" aria-label="Navegación principal">
+    <a class="brand" href="index.html">GIMNASIO <strong>CALERA</strong></a>
+    <ul class="nav-links">
+      <li><a href="inicio.html">Inicio</a></li>
+      <li><a href="tarifas.html">Tarifas</a></li>
+      <li><a href="horarios.html">Horarios</a></li>
+      <li><a href="reservar.html">Reservar</a></li>
+      <li><a href="galeria.html">Galería</a></li>
+      <li><a href="contacto.html" aria-current="page">Contacto</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main id="main">
+
+  <section class="section section--bone">
+    <div class="container">
+      <div class="contact-layout">
+
+        <div>
+          <h2 style="margin-bottom:26px;">Contáctanos</h2>
+          <p class="lede" style="font-size: 15px;"><i>Rellena el formulario y te contactamos en menos de 24 horas.</i>
+          <form id="contact-form" novalidate>
+
+            <div class="field-row">
+              <div class="field">
+                <label for="name">Nombre completo *</label>
+                <input type="text" id="name" name="name" autocomplete="name" required>
+                <p class="field-error" role="alert"></p>
+              </div>
+              <div class="field">
+                <label for="email">Email *</label>
+                <input type="email" id="email" name="email" autocomplete="email" required>
+                <p class="field-error" role="alert"></p>
+              </div>
+            </div>
+
+            <div class="field-row">
+              <!--  <div class="field">
+                <label for="phone">Teléfono</label>
+                <input type="tel" id="phone" name="phone" autocomplete="tel">
+                <p class="field-error" role="alert"></p>
+              </div> -->
+              <div class="field">
+                <label for="interest">Me interesa</label>
+                <select id="interest" name="interest">
+                  <option value="" selected disabled>Selecciona un interés…</option>
+                  <option value="tarifas">Información sobre tarifas</option>
+                  <option value="horarios">Horarios</option>
+                  <option value="entrenamiento-personal">Entrenamiento personal</option>
+                  <option value="otro">Otro</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="message">Mensaje *</label>
+              <textarea id="message" name="message" required placeholder="Escribe cualquier duda que tengas..." style="font-size: 12px;"></textarea>
+              <p class="field-error" role="alert"></p>
+            </div>
+
+            <div class="field">
+              <label style="display:flex; align-items:flex-start; gap:.6em; font-weight:400; font-size:.9rem;">
+                <input type="checkbox" id="consent" name="consent" style="width:auto; margin-top:3px;" required>
+                <span>Acepto la política de privacidad y el tratamiento de mis datos para recibir respuesta a esta consulta. *</span>
+              </label>
+            </div>
+
+            <button type="submit" class="btn btn--primary btn--block">Enviar mensaje</button>
+            <p class="form-status" role="status" aria-live="polite"></p>
+          </form>
+        </div>
+
+        <aside>
+          <div class="contact-info">
+            <h3>Datos de contacto</h3>
+            <ul>
+              <li><b>Dirección</b>Calle Mayor 24, 50300 Calera y Chozas, Toledo</li>
+              <li><b>Teléfono</b>+34 600 123 456</li>
+              <li><b>Email</b>hola@gymcalera.es</li>
+              <li><b>Horario de recepción</b>Lun–Vie 08:00–21:00 · Sáb 09:00–13:30</li>
+            </ul>
+            <iframe
+              class="map-frame"
+              title="Ubicación de Gimnasio Calera en Toledo"
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              src="https://www.google.com/maps?q=Toledo%20Zaragoza&output=embed">
+            </iframe>
+          </div>
+        </aside>
+
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="index.html">GIMNASIO <strong>CALERA</strong></a>
+        <p style="margin-top:14px; max-width:32ch;">Centro de entrenamiento de fuerza y acondicionamiento físico en el centro de Toledo.</p>
+      </div>
+      <div>
+        <h4>Navegación</h4>
+        <ul>
+          <li><a href="tarifas.html">Tarifas</a></li>
+          <li><a href="horarios.html">Horarios</a></li>
+          <li><a href="reservar.html">Reservas</a></li>
+          <li><a href="galeria.html">Galería</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contacto</h4>
+        <ul>
+          <li>Calle Mayor 24, Calera y Chozas, Toledo</li>
+          <li>+34 XXX XXX XXX</li>
+          <li>hola@gymcalera.es</li>
+        </ul>
+      </div>
+      <div>
+        <h4>Síguenos</h4>
+        <ul>
+          <li><a href="https://www.instagram.com/gymcalera">Instagram</a></li>
+          <li><a href="https://www.facebook.com/gymcalera">Facebook</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span data-year>2026</span> Gimnasio Calera. Todos los derechos reservados.</span>
+      <span>CIF B00000000 · Calera y Chozas, Toledo</span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/main.js"></script>
+</body>
+</html>
