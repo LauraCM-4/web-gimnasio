@@ -1,0 +1,60 @@
+git init
+git add .
+git commit -m "Primer commit: subiendo mi web"
+git branch -M main
+git remote add origin https://github.com/TU_USUARIO/TU_REPOSITORIO.git
+git push -u origin main
+
+--ERROR--
+c:\Users\laura\Documents\web-gimnasio>git commit -m "Primer commit: subiendo mi web"
+Author identity unknown
+*** Please tell me who you are.
+Run
+  git config --global user.email "you@example.com"
+  git config --global user.name "Your Name"
+to set your account's default identity.
+Omit --global to set the identity only in this repository.
+fatal: unable to auto-detect email address (got 'laura@DESKTOP-9ENM3JC.(none)') 
+
+Como es la primera vez que usas Git en ese ordenador, te pide que te identifiques para que quede constancia de quién ha subido el código.
+
+git config --global user.email "tu-correo@example.com"
+git config --global user.name "TuNombreDeUsuario"
+
+Una vez que ejecutes esos dos comandos, vuelve a repetir el comando del commit:
+git commit -m "Primer commit: subiendo mi web"
+git branch -M main
+git remote add origin https://github.com/TU_USUARIO/TU_REPOSITORIO.git
+git push -u origin main
+
+Ahora solo te queda el último paso para ver tu web publicada: Activar GitHub Pages.
+
+Sigue estos sencillos pasos directamente en la página web de GitHub:
+
+Entra a tu repositorio en github.com.
+
+Haz clic en la pestaña Settings (Configuración) arriba a la derecha.
+
+En el menú de la izquierda, busca y haz clic en Pages (dentro de la sección Code and automation).
+
+En Build and deployment, asegúrate de que esté seleccionado:
+
+Source: Deploy from a branch
+
+Branch: main y en la carpeta / (root).
+
+Haz clic en Save.
+
+Espera un par de minutos, recarga esa misma página (Settings > Pages) y arriba te aparecerá un recuadro verde con la dirección web oficial de tu página (algo como [https://tucuenta.github.io/tu-repositorio](https://tucuenta.github.io/tu-repositorio)).
+
+
+Desactivar GitHub Pages temporalmente 
+Si no te importa que la web deje de verse online mientras la terminas y solo quieres que desaparezca de internet por ahora:
+
+Entra a tu repositorio en GitHub.
+
+Ve a Settings > Pages (Configuración > Páginas).
+
+En la sección Build and deployment, donde pone Branch, cambia main por None (Ninguna) y guarda los cambios.
+
+¡Listo! Tu web dejará de estar accesible en internet de inmediato. Cuando quieras volver a publicarla, solo tendrás que volver ahí y seleccionar main otra vez.
