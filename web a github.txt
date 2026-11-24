@@ -6,7 +6,7 @@ git remote add origin https://github.com/TU_USUARIO/TU_REPOSITORIO.git
 git push -u origin main
 
 --ERROR--
-c:\Users\laura\Documents\web-gimnasio>git commit -m "Primer commit: subiendo mi web"
+c:\Users\laura\Documents\web-ΛUREΛ FITNESS>git commit -m "Primer commit: subiendo mi web"
 Author identity unknown
 *** Please tell me who you are.
 Run
