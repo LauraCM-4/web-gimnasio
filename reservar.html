@@ -4,11 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Reservar clase | ΛUREΛ FITNESS Toledo</title>
-<meta name="description" content="Reserva tu plaza en las clases dirigidas de ΛUREΛ FITNESS en Toledo. Grupos limitados a 16 personas: cuando se completan, deja de estar disponible.">
+<meta name="description" content="Reserva o cancela tu plaza en las clases dirigidas de ΛUREΛ FITNESS en Toledo. Grupos limitados a 16 personas: cuando se completan, deja de estar disponible.">
 <link rel="canonical" href="https://www.gymcalera.es/reservar.html">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Reservar clase | ΛUREΛ FITNESS Toledo">
-<meta property="og:description" content="Consulta las plazas libres y reserva tu clase dirigida en ΛUREΛ FITNESS. Aforo limitado a 16 personas por clase.">
+<meta property="og:description" content="Consulta las plazas libres y reserva o cancela tu clase dirigida en ΛUREΛ FITNESS. Aforo limitado a 16 personas por clase.">
 <meta property="og:url" content="https://www.gymcalera.es/reservar.html">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%23101114%22/><text x=%2250%22 y=%2268%22 font-size=%2260%22 fill=%22%23e2472b%22 text-anchor=%22middle%22 font-family=%22Arial%22>C</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -43,7 +43,7 @@
   <section class="section section--bone">
     <div class="container">
       <h2 style="margin-bottom:8px;">Plazas disponibles esta semana</h2>
-      <p class="lede" style="margin-bottom:32px;"><i>Pulsa "Elegir esta clase" para rellenar el formulario automáticamente, o selecciónala directamente más abajo.</i></p>
+      <p class="lede" style="margin-bottom:32px;"><i>Pulsa "Elegir esta clase" para rellenar el formulario automáticamente, o selecciónala directamente más abajo. Si necesitas cancelar, usa el botón "Cancelar" junto a tu reserva o el apartado de cancelación inferior.</i></p>
       <div class="grid grid--3" id="reserva-grid">
         <!-- Las tarjetas de clases se generan con JavaScript a partir del aforo disponible -->
       </div>
@@ -72,6 +72,28 @@
         </div>
         <button type="submit" class="btn btn--primary btn--block">Confirmar reserva</button>
         <p class="form-status" role="status" aria-live="polite"></p>
+      </form>
+
+      <hr style="border:0; border-top:1px solid var(--teal-700); margin:40px 0 32px;">
+
+      <h3 style="margin-bottom:8px;">Cancelar una reserva</h3>
+      <p style="color:var(--patina-300); margin-bottom:20px; font-size:.95rem;">Selecciona la clase y el nombre de la reserva que quieres anular.</p>
+
+      <form id="cancelar-form" novalidate>
+        <div class="field">
+          <label for="cancel-class-select" style="color:var(--bone-100);">Clase *</label>
+          <select id="cancel-class-select" name="cancel-class-select" required>
+            <option value="">Selecciona una clase…</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="cancel-booking-select" style="color:var(--bone-100);">Reserva a cancelar *</label>
+          <select id="cancel-booking-select" name="cancel-booking-select" required>
+            <option value="">Primero elige una clase…</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn--outline btn--block">Cancelar reserva</button>
+        <p class="form-status cancel-status" role="status" aria-live="polite"></p>
       </form>
 
     </div>
@@ -124,4 +146,3 @@
 <script src="assets/js/main.js"></script>
 </body>
 </html>
-

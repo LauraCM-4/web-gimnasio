@@ -60,15 +60,20 @@
     });
   }
 
-  /* Reserva de plazas (aforo máx. 16 por clase, compartido entre todos los dispositivos) */
+  /* Reserva y cancelación de plazas (aforo máx. 16 por clase, compartido entre todos los dispositivos) */
   var bookingGrid = document.querySelector("#reserva-grid");
   var bookingForm = document.querySelector("#reserva-form");
+  var cancelForm = document.querySelector("#cancelar-form");
 
   function initBookings() {
     var CAPACITY = 16;
     var MAX_NAME = 40;
     var select = bookingForm.querySelector("#class-select");
     var formStatus = bookingForm.querySelector(".form-status");
+
+    var cancelClassSelect = cancelForm ? cancelForm.querySelector("#cancel-class-select") : null;
+    var cancelBookingSelect = cancelForm ? cancelForm.querySelector("#cancel-booking-select") : null;
+    var cancelStatus = cancelForm ? cancelForm.querySelector(".form-status") : null;
 
     if (typeof firebase === "undefined") {
       bookingGrid.textContent = "No se pudo cargar el sistema de reservas. Inténtalo más tarde.";
@@ -86,7 +91,9 @@
       return;
     }
 
-    firebase.initializeApp(firebaseConfig);
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
     var db = firebase.database();
 
     /* Las clases se leen de la tabla de horarios.html: es el único sitio donde se editan */
@@ -133,32 +140,167 @@
         });
     }
 
-    /* Fecha del lunes de la semana actual: así las plazas se reinician cada lunes 
+    /* Fecha del sábado más reciente: las plazas se reinician cada sábado a las 00:00 */
     function weekKey() {
       var d = new Date();
       d.setHours(0, 0, 0, 0);
-      d.setDate(d.getDate() - ((d.getDay() + 6) % 7));
+      d.setDate(d.getDate() - ((d.getDay() + 1) % 7));
       return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
-    }*/
-   
-        /* Fecha del sábado más reciente: las plazas se reinician cada sábado a las 00:00 */
-    function weekKey() {
-      var d = new Date();
-      d.setHours(0, 0, 0, 0);
-      d.setDate(d.getDate() - ((d.getDay() + 1) % 7)); // sábado = 0 días de diferencia
-      return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
+    }
+
+    function makeBookingId() {
+      return "r-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 7);
+    }
+
+    function normalizeBooking(item, idx) {
+      if (!item || typeof item.nombre !== "string") return null;
+      var cleanName = item.nombre.replace(/\s+/g, " ").trim().slice(0, MAX_NAME);
+      if (!cleanName) return null;
+      return {
+        id: typeof item.id === "string" && item.id ? item.id : ("legacy-" + idx),
+        nombre: cleanName
+      };
     }
 
     /* Normaliza lo que llega de la base de datos: solo entradas válidas con nombre */
     function toList(v) {
       if (!v) return [];
-      var arr = Array.isArray(v) ? v : Object.keys(v).map(function (k) { return v[k]; });
-      return arr.filter(function (b) { return b && typeof b.nombre === "string"; });
+      var raw = Array.isArray(v) ? v : Object.keys(v).map(function (k) { return v[k]; });
+      var out = [];
+      raw.forEach(function (item, idx) {
+        var norm = normalizeBooking(item, idx);
+        if (norm) out.push(norm);
+      });
+      return out;
     }
 
     var currentData = {};
     var weekRef = null;
     var shownWeek = null;
+
+    function setCancelFeedback(message, isError) {
+      if (!cancelStatus) return;
+      cancelStatus.textContent = message;
+      cancelStatus.className = "form-status cancel-status " + (isError ? "is-error" : "is-success");
+    }
+
+    function populateCancelBookings(classId, selectedBookingId) {
+      if (!cancelBookingSelect) return;
+      var prevVal = selectedBookingId || cancelBookingSelect.value;
+      cancelBookingSelect.innerHTML = "";
+
+      if (!classId) {
+        var defaultOpt = document.createElement("option");
+        defaultOpt.value = "";
+        defaultOpt.textContent = "Primero elige una clase…";
+        cancelBookingSelect.appendChild(defaultOpt);
+        return;
+      }
+
+      var reservas = toList(currentData[classId]);
+      if (!reservas.length) {
+        var emptyOpt = document.createElement("option");
+        emptyOpt.value = "";
+        emptyOpt.textContent = "No hay reservas en esta clase";
+        cancelBookingSelect.appendChild(emptyOpt);
+        return;
+      }
+
+      var placeholder = document.createElement("option");
+      placeholder.value = "";
+      placeholder.textContent = "Selecciona la reserva…";
+      cancelBookingSelect.appendChild(placeholder);
+
+      reservas.forEach(function (item) {
+        var opt = document.createElement("option");
+        opt.value = item.id;
+        opt.textContent = item.nombre;
+        cancelBookingSelect.appendChild(opt);
+      });
+
+      if (prevVal && reservas.some(function (r) { return r.id === prevVal; })) {
+        cancelBookingSelect.value = prevVal;
+      }
+    }
+
+    function syncCancelSelectors(focusClassId, focusBookingId) {
+      if (!cancelClassSelect || !cancelBookingSelect) return;
+      var currentClassVal = focusClassId || cancelClassSelect.value;
+      cancelClassSelect.innerHTML = '<option value="">Selecciona una clase…</option>';
+
+      CLASSES.forEach(function (cls) {
+        var count = toList(currentData[cls.id]).length;
+        var opt = document.createElement("option");
+        opt.value = cls.id;
+        opt.textContent = cls.day + " " + cls.time + " — " + cls.name + " (" + count + " reservada" + (count === 1 ? "" : "s") + ")";
+        cancelClassSelect.appendChild(opt);
+      });
+
+      if (currentClassVal) {
+        cancelClassSelect.value = currentClassVal;
+      }
+      populateCancelBookings(cancelClassSelect.value, focusBookingId);
+    }
+
+    function cancelBooking(cls, bookingId, bookingName) {
+      if (!weekRef || !cls || !bookingId) return;
+      var confirmed = window.confirm(
+        "¿Cancelar la reserva de " + bookingName + " en " + cls.name + " (" + cls.day + " " + cls.time + ")?"
+      );
+      if (!confirmed) return;
+
+      setCancelFeedback("Cancelando reserva…", false);
+
+      weekRef.child(cls.id).transaction(function (lista) {
+        var arr = toList(lista);
+        var nextArr = arr.filter(function (b) { return b.id !== bookingId; });
+        if (nextArr.length === arr.length) return;
+        return nextArr.length ? nextArr : null;
+      }, function (error, committed) {
+        if (error) {
+          setCancelFeedback("No se pudo cancelar la reserva. Comprueba tu conexión.", true);
+        } else if (!committed) {
+          setCancelFeedback("Esa reserva ya no estaba activa.", true);
+        } else {
+          setCancelFeedback("Reserva cancelada: " + bookingName + " (" + cls.name + ", " + cls.day + " " + cls.time + ").", false);
+          if (cancelForm) cancelForm.reset();
+          populateCancelBookings("", "");
+        }
+      });
+    }
+
+    if (cancelClassSelect) {
+      cancelClassSelect.addEventListener("change", function () {
+        if (cancelStatus) {
+          cancelStatus.textContent = "";
+          cancelStatus.className = "form-status cancel-status";
+        }
+        populateCancelBookings(cancelClassSelect.value, "");
+      });
+    }
+
+    if (cancelForm) {
+      cancelForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+        if (cancelStatus) {
+          cancelStatus.textContent = "";
+          cancelStatus.className = "form-status cancel-status";
+        }
+        var cls = CLASSES.find(function (c) { return c.id === (cancelClassSelect ? cancelClassSelect.value : ""); });
+        if (!cls) {
+          setCancelFeedback("Elige la clase de la que quieres cancelar la reserva.", true);
+          return;
+        }
+        var bookingId = cancelBookingSelect ? cancelBookingSelect.value : "";
+        var reservas = toList(currentData[cls.id]);
+        var target = reservas.find(function (r) { return r.id === bookingId; });
+        if (!target) {
+          setCancelFeedback("Selecciona la reserva que deseas cancelar.", true);
+          return;
+        }
+        cancelBooking(cls, target.id, target.nombre);
+      });
+    }
 
     function listen() {
       var key = weekKey();
@@ -178,8 +320,8 @@
     function draw() {
       bookingGrid.innerHTML = "";
       CLASSES.forEach(function (cls) {
-        var nombres = toList(currentData[cls.id]).map(function (b) { return b.nombre; });
-        var left = Math.max(0, CAPACITY - nombres.length);
+        var reservas = toList(currentData[cls.id]);
+        var left = Math.max(0, CAPACITY - reservas.length);
         var full = left === 0;
 
         var card = document.createElement("article");
@@ -200,22 +342,40 @@
           (full ? 'Completo' : 'Elegir esta clase') +
           '</button>';
 
-        /* Los nombres (escritos por usuarios) se añaden SIEMPRE como texto, nunca como HTML 
-        if (nombres.length) {
+        /* Lista de reservas con botón directo para cancelar; nombres añadidos siempre como texto */
+        if (reservas.length) {
           var ul = document.createElement("ul");
-          ul.style.cssText = "list-style:none; padding:0; margin:1em 0 0; font-size:.85rem; color:var(--patina-300);";
-          nombres.forEach(function (n) {
+          ul.style.cssText = "list-style:none; padding:.7em 0 0; margin:1em 0 0; border-top:1px solid var(--teal-600); font-size:.86rem; color:var(--patina-300);";
+
+          reservas.forEach(function (item) {
             var li = document.createElement("li");
-            li.textContent = "• " + n;
+            li.style.cssText = "display:flex; align-items:center; justify-content:space-between; gap:8px; padding:4px 0;";
+
+            var nameSpan = document.createElement("span");
+            nameSpan.textContent = "• " + item.nombre;
+
+            var cancelBtn = document.createElement("button");
+            cancelBtn.type = "button";
+            cancelBtn.textContent = "Cancelar";
+            cancelBtn.style.cssText =
+              "background:none; border:1px solid var(--patina-400); color:var(--patina-300); " +
+              "border-radius:3px; padding:2px 8px; font-size:.78rem; cursor:pointer; flex-shrink:0;";
+            cancelBtn.addEventListener("click", function () {
+              cancelBooking(cls, item.id, item.nombre);
+            });
+
+            li.appendChild(nameSpan);
+            li.appendChild(cancelBtn);
             ul.appendChild(li);
           });
+
           card.appendChild(ul);
-        }*/
+        }
 
         bookingGrid.appendChild(card);
       });
 
-      /* Repoblar el desplegable del formulario */
+      /* Repoblar el desplegable del formulario de reserva */
       var currentValue = select.value;
       select.innerHTML = '<option value="">Selecciona una clase…</option>';
       CLASSES.forEach(function (cls) {
@@ -227,6 +387,9 @@
         select.appendChild(opt);
       });
       if (currentValue) select.value = currentValue;
+
+      /* Repoblar los desplegables del formulario de cancelación */
+      syncCancelSelectors();
 
       bookingGrid.querySelectorAll("[data-pick]").forEach(function (btn) {
         btn.addEventListener("click", function () {
@@ -261,9 +424,11 @@
       formStatus.className = "form-status is-success";
 
       weekRef.child(cls.id).transaction(function (lista) {
-        var arr = toList(lista).map(function (b) { return { nombre: b.nombre.slice(0, MAX_NAME) }; });
+        var arr = toList(lista).map(function (b) {
+          return { id: b.id, nombre: b.nombre.slice(0, MAX_NAME) };
+        });
         if (arr.length >= CAPACITY) return; // aborta: la clase se completó justo antes
-        arr.push({ nombre: nombre });
+        arr.push({ id: makeBookingId(), nombre: nombre });
         return arr;
       }, function (error, committed) {
         submitBtn.disabled = false;
