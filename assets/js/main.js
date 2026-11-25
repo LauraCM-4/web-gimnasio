@@ -133,11 +133,19 @@
         });
     }
 
-    /* Fecha del lunes de la semana actual: así las plazas se reinician cada lunes */
+    /* Fecha del lunes de la semana actual: así las plazas se reinician cada lunes 
     function weekKey() {
       var d = new Date();
       d.setHours(0, 0, 0, 0);
       d.setDate(d.getDate() - ((d.getDay() + 6) % 7));
+      return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
+    }*/
+   
+        /* Fecha del sábado más reciente: las plazas se reinician cada sábado a las 00:00 */
+    function weekKey() {
+      var d = new Date();
+      d.setHours(0, 0, 0, 0);
+      d.setDate(d.getDate() - ((d.getDay() + 1) % 7)); // sábado = 0 días de diferencia
       return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
     }
 
@@ -192,7 +200,7 @@
           (full ? 'Completo' : 'Elegir esta clase') +
           '</button>';
 
-        /* Los nombres (escritos por usuarios) se añaden SIEMPRE como texto, nunca como HTML */
+        /* Los nombres (escritos por usuarios) se añaden SIEMPRE como texto, nunca como HTML 
         if (nombres.length) {
           var ul = document.createElement("ul");
           ul.style.cssText = "list-style:none; padding:0; margin:1em 0 0; font-size:.85rem; color:var(--patina-300);";
@@ -202,7 +210,7 @@
             ul.appendChild(li);
           });
           card.appendChild(ul);
-        }
+        }*/
 
         bookingGrid.appendChild(card);
       });
